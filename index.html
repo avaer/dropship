@@ -363,59 +363,69 @@ function onSessionEnded() {
   currentSession = null;
 }
 
-const s = new WebSocket('ws://localhost:848081');
-s.onopen = () => {
-  s.onmessage = e => {
-    const j = JSON.parse(e.data);
-    const {method} = j;
-    switch (method) {
-      case 'locomotionInput': {
-        const {data} = j;
-        const leftY = data[1];
-        const rightY = data[11];
-        // console.log('got locomotion input', teleportMesh.visible, y);
+function _createSocket(u) {
+  try {
+    return new WebSocket(u);
+  } catch (err) {
+    console.warn(err.stack);
+  }
+}
 
-        if (resetted && teleportMesh.visible) {
-          if (leftY > 0.5) {
-            s.send(JSON.stringify({
-              method: 'setChaperoneTransform',
-              data: new THREE.Matrix4().makeTranslation(0, shipHeight + 0.5, 0).toArray(),
-            }));
-            resetted = false;
-          } else if (leftY < -0.5) {
-            s.send(JSON.stringify({
-              method: 'setChaperoneTransform',
-              data: new THREE.Matrix4().makeTranslation(0, 0.5, 0).toArray(),
-            }));
-            resetted = false;
-          }
-          if (rightY < -0.5) {
-            // console.log('switch 2', y);
-            s.send(JSON.stringify({
-              method: 'setSceneAppLocomotionEnabled',
-              data: true,
-            }));
+const s = _createSocket('ws://localhost:848081');
+if (s) {
+  s.onopen = () => {
+    s.onmessage = e => {
+      const j = JSON.parse(e.data);
+      const {method} = j;
+      switch (method) {
+        case 'locomotionInput': {
+          const {data} = j;
+          const leftY = data[1];
+          const rightY = data[11];
+          // console.log('got locomotion input', teleportMesh.visible, y);
 
-            teleportMesh.visible = false;
-            resetted = false;
+          if (resetted && teleportMesh.visible) {
+            if (leftY > 0.5) {
+              s.send(JSON.stringify({
+                method: 'setChaperoneTransform',
+                data: new THREE.Matrix4().makeTranslation(0, shipHeight + 0.5, 0).toArray(),
+              }));
+              resetted = false;
+            } else if (leftY < -0.5) {
+              s.send(JSON.stringify({
+                method: 'setChaperoneTransform',
+                data: new THREE.Matrix4().makeTranslation(0, 0.5, 0).toArray(),
+              }));
+              resetted = false;
+            }
+            if (rightY < -0.5) {
+              // console.log('switch 2', y);
+              s.send(JSON.stringify({
+                method: 'setSceneAppLocomotionEnabled',
+                data: true,
+              }));
+
+              teleportMesh.visible = false;
+              resetted = false;
+            }
+            if (rightY > 0.5) {
+              s.send(JSON.stringify({
+                method: 'setChaperoneTransform',
+                data: new THREE.Matrix4().makeTranslation(teleportMesh.position.x, teleportMesh.position.y, teleportMesh.position.z).toArray(),
+              }));
+              resetted = false;
+            }
           }
-          if (rightY > 0.5) {
-            s.send(JSON.stringify({
-              method: 'setChaperoneTransform',
-              data: new THREE.Matrix4().makeTranslation(teleportMesh.position.x, teleportMesh.position.y, teleportMesh.position.z).toArray(),
-            }));
-            resetted = false;
+          if (rightY === 0) {
+            resetted = true;
           }
+
+          break;
         }
-        if (rightY === 0) {
-          resetted = true;
-        }
-
-        break;
       }
-    }
+    };
   };
-};
+}
 
 navigator.xr.requestSession('immersive-vr', {
   optionalFeatures: [

@@ -427,7 +427,7 @@ if (s) {
   };
 }
 
-navigator.xr.requestSession('immersive-vr', {
+navigator.xr && navigator.xr.requestSession('immersive-vr', {
   optionalFeatures: [
     'local-floor',
     'bounded-floor',

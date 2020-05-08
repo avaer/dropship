@@ -363,7 +363,7 @@ function onSessionEnded() {
   currentSession = null;
 }
 
-const s = new WebSocket('ws://' + `localhost:${q.p}`);
+const s = new WebSocket('ws://localhost:848081');
 s.onopen = () => {
   s.onmessage = e => {
     const j = JSON.parse(e.data);

@@ -281,9 +281,6 @@ function animate(time, frame) {
         if (handedness === 'right') {
           const [xx,yy,x, y] = axes;
 
-          if (Math.random() > .9) {
-          console.log(axes)
-      }
           if (resetted && !teleportMesh.visible && y > 0.5) {
             // console.log('switch 1', y);
             s.send(JSON.stringify({

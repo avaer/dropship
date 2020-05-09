@@ -282,7 +282,7 @@ function animate(time, frame) {
           const [x, y] = axes;
 
           if (resetted && !teleportMesh.visible && y > 0.5) {
-            console.log('switch 1', y);
+            // console.log('switch 1', y);
             s.send(JSON.stringify({
               method: 'setSceneAppLocomotionEnabled',
               data: false,
@@ -360,15 +360,7 @@ function onSessionEnded() {
   currentSession = null;
 }
 
-function _createSocket(u) {
-  try {
-    return new WebSocket(u);
-  } catch (err) {
-    console.warn(err.stack);
-  }
-}
-
-const s = _createSocket('ws://localhost:48081');
+const s = new WebSocket('ws://localhost:48081/');
 if (s) {
   s.onopen = () => {
     s.onmessage = e => {
@@ -396,7 +388,7 @@ if (s) {
               resetted = false;
             }
             if (rightY < -0.5) {
-              console.log('switch 2', y);
+              // console.log('switch 2', y);
               s.send(JSON.stringify({
                 method: 'setSceneAppLocomotionEnabled',
                 data: true,
@@ -424,7 +416,7 @@ if (s) {
   };
 }
 
-navigator.xr && navigator.xr.requestSession('immersive-vr', {
+navigator.xr.requestSession('immersive-vr', {
   optionalFeatures: [
     'local-floor',
     'bounded-floor',

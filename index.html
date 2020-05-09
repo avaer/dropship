@@ -279,10 +279,10 @@ function animate(time, frame) {
         }
         
         if (handedness === 'right') {
-          const [xx,yy,x, y] = axes;
+          const [x, y] = axes;
 
           if (resetted && !teleportMesh.visible && y > 0.5) {
-            // console.log('switch 1', y);
+            console.log('switch 1', y);
             s.send(JSON.stringify({
               method: 'setSceneAppLocomotionEnabled',
               data: false,
@@ -396,7 +396,7 @@ if (s) {
               resetted = false;
             }
             if (rightY < -0.5) {
-              // console.log('switch 2', y);
+              console.log('switch 2', y);
               s.send(JSON.stringify({
                 method: 'setSceneAppLocomotionEnabled',
                 data: true,
